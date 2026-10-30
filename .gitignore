@@ -1,0 +1,13 @@
+# Dados: ficam só no seu computador
+Data/
+*.csv
+
+# Credenciais: nunca enviar ao GitHub
+credentials/
+*-key.json
+.env
+
+# Arquivos temporários do Python e do Jupyter
+__pycache__/
+.ipynb_checkpoints/
+venv/
