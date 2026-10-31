@@ -1,6 +1,7 @@
 # Dados: ficam só no seu computador
 Data/
 *.csv
+Docs/Plano de Fundo*
 
 # Credenciais: nunca enviar ao GitHub
 credentials/
