@@ -12,3 +12,6 @@ credentials/
 __pycache__/
 .ipynb_checkpoints/
 venv/
+
+# Arquivos do Power BI
+*.pbix
