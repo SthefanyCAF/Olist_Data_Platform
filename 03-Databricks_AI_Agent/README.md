@@ -48,7 +48,9 @@ Um agente só responde bem se entende os dados. As tabelas e colunas ganharam de
 
 Um espaço Genie sobre as 6 tabelas, com as relações entre elas (joins), instruções gerais curtas e **três** exemplos de SQL. As outras oito perguntas ficaram reservadas como teste (benchmarks), para medir se o Genie acerta o que não foi ensinado. Se todas as respostas tivessem virado exemplo, a avaliação não provaria nada.
 
-![Espaço Genie respondendo uma pergunta](./Docs/genie_espaco.png)
+![Espaço Genie respondendo uma pergunta - Parte 1](./Docs/genie_espaco_1.png)
+
+![Espaço Genie respondendo uma pergunta - Parte 2](./Docs/genie_espaco_2.png)
 
 ### Agente em Python
 
