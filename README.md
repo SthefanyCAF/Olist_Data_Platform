@@ -35,7 +35,7 @@ flowchart LR
 | # | Projeto | Papel na história | O que entrega | Tecnologias | Status |
 |---|---------|-------------------|---------------|-------------|--------|
 | 1 | [ETL e Data Warehouse](./01-BigQuery_ETL_DW) | Os dados entram | Dados limpos no BigQuery, modelo em fatos e dimensões e painel de vendas e entregas | Python, pandas, BigQuery, SQL, Power BI | ✅ Concluído |
-| 2 | [Lakehouse em camadas](./02-Databricks_Lakehouse) | Os dados ganham qualidade | Pipeline bronze, prata e ouro com carga incremental e verificações de qualidade | Databricks, PySpark, SQL | ⚪ A fazer |
+| 2 | [Lakehouse em camadas](./02-Databricks_Lakehouse) | Os dados ganham qualidade | Pipeline bronze, prata e ouro com carga incremental e verificações de qualidade | Databricks, PySpark, SQL | ✅ Concluído |
 | 3 | [Agente de dados](./03-Databricks_AI_Agent) | Os dados respondem perguntas | Agente que responde perguntas de negócio consultando as tabelas ouro | Databricks, IA agêntica | ⚪ A fazer |
 | 4 | [Avaliações no MongoDB](./04-MongoDB_Reviews) | Dados semiestruturados entram na plataforma | Avaliações dos clientes em banco NoSQL, integradas à camada prata | MongoDB, Python | ⚪ A fazer |
 | 5 | [Automação com N8N](./05-N8N_Automation) | A informação chega a quem decide | Fluxo automatizado com resumos e alertas, por exemplo pedidos atrasados | N8N | ⚪ A fazer |
