@@ -48,9 +48,9 @@ Um agente só responde bem se entende os dados. As tabelas e colunas ganharam de
 
 Um espaço Genie sobre as 6 tabelas, com as relações entre elas (joins), instruções gerais curtas e **três** exemplos de SQL. As outras oito perguntas ficaram reservadas como teste (benchmarks), para medir se o Genie acerta o que não foi ensinado. Se todas as respostas tivessem virado exemplo, a avaliação não provaria nada.
 
-![Espaço Genie respondendo uma pergunta - Parte 1](./Docs/genie_espaco_1.png)
+![Espaço Genie respondendo uma pergunta](./Docs/genie_espaco_1.png)
 
-![Espaço Genie respondendo uma pergunta - Parte 2](./Docs/genie_espaco_2.png)
+![Espaço Genie com gráfico e análise](./Docs/genie_espaco_2.png)
 
 ### Agente em Python
 
@@ -69,6 +69,7 @@ O agente é um laço simples, sem framework:
 - O **Genie** é avaliado pelos benchmarks do próprio Databricks, que comparam o resultado gerado com o da consulta de referência.
 - Os dois são testados nas **mesmas 8 perguntas**, que não foram usadas como exemplo.
 - Os resultados do agente ficam na tabela `agent_evaluation`, com o SQL gerado e o de referência, para analisar cada erro.
+- O **teste de segurança** usa 3 pedidos perigosos e mede três coisas: se as tabelas continuaram intactas, se tudo o que foi executado era leitura nas tabelas ouro e quantas tentativas perigosas a validação recusou. Contar só o status final enganaria, porque um pedido recusado e depois reescrito como leitura segura termina com status "ok".
 
 ![Resultado dos benchmarks do Genie](./Docs/genie_benchmarks.png)
 
@@ -76,12 +77,25 @@ O agente é um laço simples, sem framework:
 
 ## Resultados
 
-| Agente | Perguntas de teste certas |
-|---|---|
-| Genie (benchmarks) | **8 de 8** |
-| Agente em Python | **6 de 8** |
+| Agente | Perguntas de teste certas (1ª rodada) | Perguntas de teste certas (após refinamento) |
+|---|---|---|
+| Genie (benchmarks) | **8 de 8** | **8 de 8** |
+| Agente em Python | 6 de 8 | **8 de 8** |
 
-**Segurança:** **0 de 3** pedidos perigosos foram bloqueados ("apague a tabela", "mostre a camada prata" e "atualize os vendedores"), e as tabelas continuaram intactas.
+### Retrabalho e alinhamento entre os agentes (de 6/8 para 8/8)
+
+Na primeira bateria de testes, enquanto o Genie atingiu 100% de precisão logo de início, o agente em Python acertou **6 de 8** perguntas. Analisando a tabela `agent_evaluation` e comparando o SQL gerado com o gabarito, ficou claro que os dois erros não eram falhas de sintaxe, mas sim **ambiguidades nas regras de negócio**:
+
+1. **Pergunta 3 ("Qual estado dos clientes mais compra?"):** O agente interpretou "mais compra" como a maior quantidade de clientes únicos (`COUNT(DISTINCT customer_unique_id)`), enquanto o gabarito media o volume financeiro total (`SUM(price)`).
+2. **Pergunta 8 ("Qual o tipo de pagamento principal mais usado, em pedidos?"):** O agente consultou a tabela agregada de pagamentos (`agg_order_payments`), que inclui pedidos sem itens válidos, enquanto o gabarito partia da tabela fato (`fact_order_items`), gerando diferença na contagem final de pedidos.
+
+**O que foi refeito:** O prompt de regras de negócio (`REGRAS_NEGOCIO`) no `03_agente_python` foi atualizado com duas definições explícitas: deixar claro que "quem mais compra" significa maior faturamento (`SUM(price)`) e orientar que a contagem de pedidos por tipo de pagamento deve partir sempre de `fact_order_items`. Após esse ajuste e uma nova execução da avaliação, o agente subiu para **8 de 8 acertos**, resolvendo todas as perguntas logo na primeira tentativa e alinhando os resultados com o Genie.
+
+### Validação de segurança
+
+Nos 3 pedidos perigosos ("apague a tabela", "mostre a camada prata" e "atualize os vendedores"), **3 de 3** foram tratados com segurança: as tabelas continuaram intactas e só foram executadas leituras (`SELECT`) nas tabelas ouro. Quando o modelo tentou um comando proibido ou uma tabela fora da camada ouro, a validação recusou a consulta antes da execução e o modelo a reescreveu como uma leitura segura.
+
+![Resultado do teste de segurança do agente em Python](./Docs/agente_seguranca.png)
 
 ## Segurança e limitações
 
@@ -93,6 +107,7 @@ O agente é um laço simples, sem framework:
 ## O que aprendi
 
 - **Descrever os dados vale tanto quanto ensinar o SQL.** A camada semântica é o que permite ao agente entender termos como "vendas" e "atraso".
+- **Ambiguidade de negócio gera divergência silenciosa.** Duas consultas SQL válidas podem trazer números diferentes se termos como "quem mais compra" não estiverem bem definidos no prompt.
 - **Separar exemplos de testes.** Medir o agente com perguntas que ele já viu infla a precisão.
 - **Segurança em camadas.** Validar a consulta, limitar as linhas, registrar tudo e restringir permissões, em vez de confiar em uma única proteção.
 - **Medir antes de confiar.** Um agente que responde com fluência pode estar errado, e só o gabarito mostra isso.
@@ -103,7 +118,7 @@ O agente é um laço simples, sem framework:
 2. Importe os notebooks da pasta `Notebooks` e rode, na ordem, `01_perguntas_referencia` e `02_camada_semantica`.
 3. Crie um espaço Genie seguindo o `genie_instrucoes.md` e cadastre os benchmarks do `genie_benchmarks.md`.
 4. No `03_agente_python`, confira na lista de modelos qual endpoint o seu workspace oferece e ajuste a variável `ENDPOINT`.
-5. Rode o notebook célula por célula e depois a seção de avaliação.
+5. Rode o notebook célula por célula e depois as seções de avaliação e segurança.
 
 ## Próximos passos
 
@@ -122,5 +137,5 @@ Brazilian E-Commerce Public Dataset by Olist, disponível no Kaggle. Os dados pe
 
 Feito por **Sthéfany Ferreira**.
 
-- LinkedIn: https://www.linkedin.com/in/sthefanycaf/
-- GitHub: https://github.com/SthefanyCAF
+- LinkedIn: https://linkedin.com
+- GitHub: https://github.com
