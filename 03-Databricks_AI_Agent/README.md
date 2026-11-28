@@ -137,5 +137,5 @@ Brazilian E-Commerce Public Dataset by Olist, disponível no Kaggle. Os dados pe
 
 Feito por **Sthéfany Ferreira**.
 
-- LinkedIn: https://linkedin.com
-- GitHub: https://github.com
+- LinkedIn: [linkedin.com/in/sthefanycaf](https://www.linkedin.com/in/sthefanycaf/)
+- GitHub: [github.com/SthefanyCAF](https://github.com/SthefanyCAF)
